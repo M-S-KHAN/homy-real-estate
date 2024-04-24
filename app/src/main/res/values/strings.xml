@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">Homy</string>
+    <string name="error_logging_in">Error Logging In</string>
+    <string name="logged_in">Logged In Successfully</string>
+    <string name="email_text">Email</string>
+    <string name="username_text">Username</string>
+    <string name="password_text">Password</string>
+    <string name="invalid_email_pass">Please enter a valid email and password</string>
+    <string name="login_text">Login</string>
+    <string name="logging_in_text">Logging In</string>
+    <string name="new_user_register">New? Register now.</string>
+    <string name="already_a_member">Already a member? Login now.</string>
+</resources>
