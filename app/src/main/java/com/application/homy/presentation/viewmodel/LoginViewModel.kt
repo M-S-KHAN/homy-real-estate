@@ -23,8 +23,10 @@ class LoginViewModel @Inject constructor(
     private val sessionManager: SessionManager
 ) : ViewModel() {
 
+
     private val _loginState = MutableStateFlow<Boolean?>(null)
     val loginState: StateFlow<Boolean?> get() = _loginState.asStateFlow()
+
 
     fun login(email: String, password: String, snackbarManager: SnackbarManager) {
         viewModelScope.launch {
@@ -65,12 +67,7 @@ class LoginViewModel @Inject constructor(
         return LoginResponse(message = "Unknown error occurred", user = null)
     }
 
-    fun checkIfLoggedIn() {
-        _loginState.value = sessionManager.isLoggedIn()
-        if (_loginState.value == true) {
-            // Navigate to home screen or change UI to logged in state
-            // Navigation code goes here
-            println("User is logged in")
-        }
+    fun checkIfLoggedIn(): Boolean {
+        return sessionManager.isLoggedIn()
     }
 }

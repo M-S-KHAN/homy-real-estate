@@ -45,7 +45,12 @@ fun LoginScreenWithScaffold(logo: Painter, navController: NavController) {
 
 
 @Composable
-fun LoginScreen(viewModel: LoginViewModel, logo: Painter, snackbarManager: SnackbarManager, navController: NavController) {
+fun LoginScreen(
+    viewModel: LoginViewModel,
+    logo: Painter,
+    snackbarManager: SnackbarManager,
+    navController: NavController
+) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var isLoggingIn by remember { mutableStateOf(false) }
@@ -57,6 +62,10 @@ fun LoginScreen(viewModel: LoginViewModel, logo: Painter, snackbarManager: Snack
     val loginState by viewModel.loginState.collectAsState(initial = null)
 
     val invalidMessage = stringResource(id = R.string.invalid_email_pass)
+
+    if (viewModel.checkIfLoggedIn()) {
+        navController.navigate("home")
+    }
 
     // This is where navigation should be handled based on the login state
     LaunchedEffect(loginState) {
@@ -145,11 +154,9 @@ fun LoginScreen(viewModel: LoginViewModel, logo: Painter, snackbarManager: Snack
                 onClick = {
                     isLoggingIn = true
                     viewModel.login(email, password, snackbarManager)
-                },
-                colors = ButtonDefaults.buttonColors(
+                }, colors = ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colorScheme.secondary, contentColor = Color.Black
-                ),
-                enabled = !isLoggingIn && isEmailValid && isPasswordValid,
+                ), enabled = !isLoggingIn && isEmailValid && isPasswordValid,
 
                 modifier = Modifier
                     .height(50.dp)

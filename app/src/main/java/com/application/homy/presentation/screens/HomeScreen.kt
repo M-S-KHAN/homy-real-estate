@@ -1,5 +1,7 @@
 package com.application.homy.presentation.screens
 
+import LoginScreen
+import LoginScreenWithScaffold
 import android.annotation.SuppressLint
 import androidx.activity.compose.BackHandler
 import androidx.compose.material3.BottomAppBar
@@ -20,8 +22,10 @@ import androidx.compose.material.icons.rounded.Home
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.application.homy.R
 import com.application.homy.presentation.viewmodel.ProfileViewModel
 import com.application.homy.presentation.viewmodel.RegisterViewModel
 
@@ -120,6 +124,10 @@ fun BottomNavigationBar(navController: NavHostController) {
 
 @Composable
 fun NavigationGraph(navController: NavHostController) {
+    // print current route
+    val currentRoute = navController.currentBackStackEntry?.destination?.route
+    println("Current route: $currentRoute")
+    val logoPainter = painterResource(id = R.drawable.logo_full)
 
 //    val rViewModel: ProfileViewModel =
 //        viewModel { ProfileViewModel(apiService, sessionManager) }
@@ -127,6 +135,7 @@ fun NavigationGraph(navController: NavHostController) {
     NavHost(navController = navController, startDestination = "browse") {
         composable("browse") { BrowseScreen() }
         composable("favourites") { FavouritesScreen() }
-        composable("profile") { ProfileScreen() }
+        composable("profile") { ProfileScreen(navController) }
+        composable("login") { LoginScreenWithScaffold(logoPainter, navController) }
     }
 }

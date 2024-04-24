@@ -17,12 +17,15 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.application.homy.presentation.screens.HomeScreen
+import com.application.homy.service.SessionManager
 import com.application.homy.ui.theme.HomyTheme
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContent {
             HomyTheme {
                 // A surface container using the 'background' color from the theme
@@ -39,6 +42,7 @@ class MainActivity : ComponentActivity() {
     fun AppNavigation() {
         val navController = rememberNavController()
         val logoPainter = painterResource(id = R.drawable.logo_full)
+
 
         NavHost(navController = navController, startDestination = "login") {
             composable("login") {
