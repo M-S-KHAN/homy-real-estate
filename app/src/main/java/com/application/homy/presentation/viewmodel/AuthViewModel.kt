@@ -4,6 +4,7 @@ import androidx.lifecycle.*
 import com.application.homy.service.ApiService
 import com.application.homy.service.LoginRequest
 import com.application.homy.service.LoginResponse
+import com.application.homy.service.RegisterRequest
 import com.application.homy.service.SessionManager
 import com.application.homy.service.SnackbarManager
 import com.google.gson.Gson
@@ -18,19 +19,19 @@ import java.io.IOException
 import javax.inject.Inject
 
 @HiltViewModel
-class LoginViewModel @Inject constructor(
-    private val apiService: ApiService,
-    private val sessionManager: SessionManager
+class AuthViewModel @Inject constructor(
+    private val apiService: ApiService, private val sessionManager: SessionManager
 ) : ViewModel() {
 
 
     private val _loginState = MutableStateFlow<Boolean?>(null)
+    private val _registerState = MutableStateFlow<Boolean?>(null)
     val loginState: StateFlow<Boolean?> get() = _loginState.asStateFlow()
+    val registerState: StateFlow<Boolean?> get() = _registerState.asStateFlow()
 
 
     fun login(email: String, password: String, snackbarManager: SnackbarManager) {
         viewModelScope.launch {
-            _loginState.value = null // Optional: to ensure loading state is represented
             try {
                 val response = apiService.login(LoginRequest(email, password))
                 if (response.isSuccessful && response.body() != null) {
@@ -50,6 +51,34 @@ class LoginViewModel @Inject constructor(
             } catch (e: Exception) {
                 println("Exception: ${e.message}")
                 _loginState.value = false
+            }
+        }
+    }
+
+    fun register(
+        username: String, email: String, password: String, snackbarManager: SnackbarManager
+    ) {
+        viewModelScope.launch {
+            _registerState.value = null // Optional: to ensure loading state is represented
+            try {
+                val response = apiService.register(RegisterRequest(username, email, password))
+                if (response.isSuccessful && response.body() != null) {
+                    val registerResponse = response.body()
+                    val user = registerResponse?.user
+                    if (user != null) {
+                        sessionManager.saveUserId(user.username)
+                        println(user)
+                    }
+                    snackbarManager.showMessage(registerResponse!!.message)
+                    _registerState.value = true
+                } else {
+                    val errorResponse = parseError(response)
+                    snackbarManager.showMessage(errorResponse.message)
+                    _registerState.value = false
+                }
+            } catch (e: Exception) {
+                println("Exception: ${e.message}")
+                _registerState.value = false
             }
         }
     }

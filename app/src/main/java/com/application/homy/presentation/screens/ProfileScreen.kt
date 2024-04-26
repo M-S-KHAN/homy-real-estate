@@ -35,7 +35,8 @@ fun ProfileScreen(navController: NavController) {
     TextButton(onClick = {
         // Call the logout function from the view model
          viewModel.logout()
-        // Navigate to the login screen
+
+        // Pop until login screen
         navController.navigate("login") {
             popUpTo("login") { inclusive = true }
         }

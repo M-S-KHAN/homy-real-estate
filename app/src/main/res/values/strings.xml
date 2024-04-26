@@ -5,9 +5,18 @@
     <string name="email_text">Email</string>
     <string name="username_text">Username</string>
     <string name="password_text">Password</string>
+    <string name="confirm_password_text">Confirm Password</string>
     <string name="invalid_email_pass">Please enter a valid email and password</string>
     <string name="login_text">Login</string>
-    <string name="logging_in_text">Logging In</string>
+    <string name="logging_in_text">Logging In…</string>
+    <string name="registering_text">Signing Up…</string>
     <string name="new_user_register">New? Register now.</string>
+    <string name="register_text">Register</string>
     <string name="already_a_member">Already a member? Login now.</string>
+    <string name="home_route">home</string>
+    <string name="profile_route">profile</string>
+    <string name="login_route">login</string>
+    <string name="register_route">register</string>
+    <string name="favourites_route">favourites</string>
+    <string name="browse_route">browse</string>
 </resources>
