@@ -1,16 +1,34 @@
 package com.application.homy.presentation.screens
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import android.os.Build
+import androidx.annotation.RequiresApi
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import com.application.homy.presentation.elements.CustomScaffold
+import com.application.homy.presentation.elements.PropertyCard
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun BrowseScreen() {
-    Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
-        Text(text = "Browse Page", style = MaterialTheme.typography.bodyMedium)
+    CustomScaffold(title = "Browse Properties", body = { paddingValues ->
+        BrowseScreenContent(paddingValues)
+    })
+}
+
+@RequiresApi(Build.VERSION_CODES.O)
+@Composable
+fun BrowseScreenContent(paddingValues: PaddingValues) {
+
+    LazyColumn(
+        modifier = Modifier.padding(paddingValues),
+        contentPadding = PaddingValues(20.dp),
+    ) {
+        items(10) {
+            PropertyCard()
+        }
     }
 }
