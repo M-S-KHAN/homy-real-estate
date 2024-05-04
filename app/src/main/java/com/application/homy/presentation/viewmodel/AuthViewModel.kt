@@ -1,102 +1,94 @@
 package com.application.homy.presentation.viewmodel
 
+import androidx.compose.material3.SnackbarHostState
 import androidx.lifecycle.*
-import com.application.homy.service.ApiService
-import com.application.homy.service.LoginRequest
-import com.application.homy.service.LoginResponse
-import com.application.homy.service.RegisterRequest
+import com.application.homy.data.LoginResult
+import com.application.homy.data.RegisterResult
+import com.application.homy.service.ApiRepository
+import com.application.homy.service.ApiResponse
 import com.application.homy.service.SessionManager
 import com.application.homy.service.SnackbarManager
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import retrofit2.Response
-import java.io.IOException
 import javax.inject.Inject
 
 @HiltViewModel
 class AuthViewModel @Inject constructor(
-    private val apiService: ApiService, private val sessionManager: SessionManager
+    private val apiRepository: ApiRepository,
+    private val sessionManager: SessionManager,
+    private val snackbarManager: SnackbarManager
 ) : ViewModel() {
 
+    private val _loginState = MutableStateFlow<ApiResponse<LoginResult>?>(null)
+    val loginState: StateFlow<ApiResponse<LoginResult>?> = _loginState.asStateFlow()
+    private val _isLoggingIn = MutableStateFlow(false)
+    val isLoggingIn = _isLoggingIn.asStateFlow()
 
-    private val _loginState = MutableStateFlow<Boolean?>(null)
-    private val _registerState = MutableStateFlow<Boolean?>(null)
-    val loginState: StateFlow<Boolean?> get() = _loginState.asStateFlow()
-    val registerState: StateFlow<Boolean?> get() = _registerState.asStateFlow()
+    private val _registerState = MutableStateFlow<ApiResponse<RegisterResult>?>(null)
+    val registerState: StateFlow<ApiResponse<RegisterResult>?> = _registerState.asStateFlow()
+    private val _isRegistering = MutableStateFlow(false)
+    val isRegistering = _isRegistering.asStateFlow()
 
 
-    fun login(email: String, password: String, snackbarManager: SnackbarManager) {
+    fun login(email: String, password: String, snackbarHostState: SnackbarHostState) {
+        _isLoggingIn.value = true
         viewModelScope.launch {
-            try {
-                val response = apiService.login(LoginRequest(email, password))
-                if (response.isSuccessful && response.body() != null) {
-                    val loginResponse = response.body()
-                    val user = loginResponse?.user
-                    if (user != null) {
-                        sessionManager.saveUserId(user.username)
-                        println(user)
+            apiRepository.login(email, password).collect { response ->
+                when (response) {
+                    is ApiResponse.Success<*> -> {
+                        snackbarManager.showInfo(
+                            snackbarHostState, "Login Successful"
+                        )
+                        sessionManager.saveUserId((response.data as LoginResult).user!!.id.toString())
                     }
-                    snackbarManager.showMessage(loginResponse!!.message)
-                    _loginState.value = true
-                } else {
-                    val errorResponse = parseError(response)
-                    snackbarManager.showMessage(errorResponse.message)
-                    _loginState.value = false
+
+                    is ApiResponse.Error -> snackbarManager.showError(
+                        snackbarHostState,
+                        response.message,
+                    )
                 }
-            } catch (e: Exception) {
-                println("Exception: ${e.message}")
-                _loginState.value = false
+                _loginState.value = response
+
             }
+            _isLoggingIn.value = false
         }
     }
 
     fun register(
-        username: String, email: String, password: String, snackbarManager: SnackbarManager
+        username: String, email: String, password: String, snackbarHostState: SnackbarHostState
     ) {
+        _isRegistering.value = true
         viewModelScope.launch {
-            _registerState.value = null // Optional: to ensure loading state is represented
-            try {
-                val response = apiService.register(RegisterRequest(username, email, password))
-                if (response.isSuccessful && response.body() != null) {
-                    val registerResponse = response.body()
-                    val user = registerResponse?.user
-                    if (user != null) {
-                        sessionManager.saveUserId(user.username)
-                        println(user)
+            apiRepository.register(username, email, password).collect { response ->
+                when (response) {
+                    is ApiResponse.Success<*> -> {
+                        snackbarManager.showInfo(snackbarHostState, "Registration Successful")
+                        sessionManager.saveUserId((response.data as LoginResult).user!!.id.toString())
                     }
-                    snackbarManager.showMessage(registerResponse!!.message)
-                    _registerState.value = true
-                } else {
-                    val errorResponse = parseError(response)
-                    snackbarManager.showMessage(errorResponse.message)
-                    _registerState.value = false
-                }
-            } catch (e: Exception) {
-                println("Exception: ${e.message}")
-                _registerState.value = false
-            }
-        }
-    }
 
-    private fun parseError(response: Response<*>): LoginResponse {
-        val gson = Gson()
-        val type = object : TypeToken<LoginResponse>() {}.type
-        response.errorBody()?.string()?.let {
-            try {
-                return gson.fromJson(it, type)
-            } catch (e: IOException) {
-                e.printStackTrace()
+                    is ApiResponse.Error -> {
+                        snackbarManager.showError(snackbarHostState, response.message)
+                    }
+                }
+                _registerState.value = response
             }
+            _isRegistering.value = false
         }
-        return LoginResponse(message = "Unknown error occurred", user = null)
     }
 
     fun checkIfLoggedIn(): Boolean {
         return sessionManager.isLoggedIn()
+    }
+
+    fun getUserId(): String? {
+        return sessionManager.fetchUserId()
+    }
+
+    fun logout() {
+        sessionManager.logout()
+//        isLoggedIn = false
     }
 }

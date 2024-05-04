@@ -23,17 +23,18 @@ import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import coil.size.Scale
+import com.application.homy.data.Property
 import com.application.homy.R
-import java.time.format.DateTimeFormatter
-import java.time.LocalDate
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun PropertyCard() {
-    var isFavorite by remember { mutableStateOf(false) }
-    val price = "$55,000"
-    val postedDate =
-        LocalDate.now().minusDays(5).format(DateTimeFormatter.ofPattern("MMM dd, yyyy"))
+fun PropertyCard(property: Property) {
+    var isFavorite by remember { mutableStateOf(property.isFavorite) }
+    val formattedPrice = "$ ${property.price}"
+
+    val formattedDate = property.created_at.split(" ")[0].split("-").let {
+        "${it[2]} ${it[1]} ${it[0]}"
+    }
 
     Card(
         modifier = Modifier
@@ -46,8 +47,10 @@ fun PropertyCard() {
             Image(
                 painter = rememberAsyncImagePainter(
                     ImageRequest.Builder(LocalContext.current)
-                        .data("https://ik.imagekit.io/nankanamart/pexels-pixabay-259588_8D7LNlGJa.jpg?updatedAt=1714496973402")
-                        .placeholder(R.drawable.logo_full).scale(Scale.FILL).build()
+                        .data(property.images.firstOrNull() ?: "")
+                        .placeholder(R.drawable.logo_full)
+                        .scale(Scale.FILL)
+                        .build()
                 ),
                 contentDescription = "Property Image",
                 modifier = Modifier
@@ -57,24 +60,24 @@ fun PropertyCard() {
             )
             Column(modifier = Modifier.padding(30.dp, 15.dp, 30.dp, 15.dp)) {
                 Text(
-                    text = "Country Farmhouse",
+                    text = property.title,
                     style = MaterialTheme.typography.titleLarge,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(0.dp, 0.dp, 0.dp, 10.dp)
+                    modifier = Modifier.padding(bottom = 10.dp)
                 )
                 Text(
-                    text = "Charming farmhouse in the countryside, perfect for peace and quiet. Features include three bedrooms, a large barn, and over 50 acres of land.",
+                    text = property.description,
                     style = MaterialTheme.typography.bodyMedium,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis,
                     fontSize = 14.sp,
                     lineHeight = 16.sp,
-                    modifier = Modifier.padding(0.dp, 0.dp, 0.dp, 5.dp)
+                    modifier = Modifier.padding(bottom = 5.dp)
                 )
                 Text(
-                    text = "321 Country Road, Rural Area",
+                    text = property.address,
                     style = MaterialTheme.typography.bodySmall,
                     color = Color.Gray,
                     fontSize = 12.sp
@@ -85,7 +88,7 @@ fun PropertyCard() {
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = price,
+                        text = formattedPrice,
                         color = Color.White,
                         style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold),
                         modifier = Modifier
@@ -96,7 +99,7 @@ fun PropertyCard() {
                     )
                     Spacer(Modifier.weight(1f))
                     Text(
-                        text = "Posted: $postedDate",
+                        text = "Posted: $formattedDate",
                         style = MaterialTheme.typography.bodySmall,
                         color = Color.Gray
                     )

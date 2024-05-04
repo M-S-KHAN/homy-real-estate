@@ -1,7 +1,5 @@
 package com.application.homy
 
-import LoginScreen
-import RegistrationScreen
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -31,7 +29,9 @@ import androidx.navigation.compose.rememberNavController
 import com.application.homy.presentation.screens.BottomNavigationBar
 import com.application.homy.presentation.screens.BrowseScreen
 import com.application.homy.presentation.screens.FavouritesScreen
+import com.application.homy.presentation.screens.LoginScreen
 import com.application.homy.presentation.screens.ProfileScreen
+import com.application.homy.presentation.screens.RegistrationScreen
 import com.application.homy.presentation.viewmodel.AuthViewModel
 import com.application.homy.ui.theme.HomyTheme
 
@@ -85,7 +85,7 @@ class MainActivity : ComponentActivity() {
 
         // Get the view model using hilt
         val auth: AuthViewModel = hiltViewModel()
-        val startDestination = if (auth.checkIfLoggedIn()) "main" else "main"
+        val startDestination = if (auth.checkIfLoggedIn()) "main" else "login"
 
         val logoPainter = painterResource(id = R.drawable.logo_full)
 

@@ -1,3 +1,5 @@
+package com.application.homy.presentation.screens
+
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -17,7 +19,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.application.homy.R
 import com.application.homy.presentation.viewmodel.AuthViewModel
-import com.application.homy.service.SnackbarManager
+import com.application.homy.service.ApiResponse
 import com.application.homy.ui.theme.LogoYellow
 
 @Composable
@@ -25,44 +27,34 @@ fun LoginScreen(logo: Painter, navController: NavController) {
     val viewModel: AuthViewModel = hiltViewModel()
 
     val snackbarHostState = remember { SnackbarHostState() }
-    val coroutineScope = rememberCoroutineScope()
-    val snackbarManager = SnackbarManager(snackbarHostState, coroutineScope)
 
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
-    var isLoggingIn by remember { mutableStateOf(false) }
+    val isLoggingIn by viewModel.isLoggingIn.collectAsState()
 
     val emailPattern = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+" // Simple email pattern for validation
     val isEmailValid = email.matches(emailPattern.toRegex())
     val isPasswordValid = password.length >= 8 // Assuming valid password is more than 5 characters
 
-    val loginState by viewModel.loginState.collectAsState(initial = null)
+    val loginState = viewModel.loginState.collectAsState().value
 
-//    val invalidMessage = stringResource(id = R.string.invalid_email_pass)
-    val mainRoute = stringResource(id = R.string.browse_route)
-
-    // This is where navigation should be handled based on the login state
     LaunchedEffect(loginState) {
         when (loginState) {
-            true -> {
-                isLoggingIn = false
-                // Navigate to home screen
-                navController.navigate(mainRoute)
+            is ApiResponse.Success -> {
+                // Navigate on success
+                navController.navigate("main") {
+                    popUpTo("login") { inclusive = true }
+                }
             }
 
-            false -> {
-                isLoggingIn = false
-            }
-
-            null -> {
-                println("State Reset")
+            else -> {
+                // Handle other states if necessary
             }
         }
     }
 
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) },
-        // Place other Scaffold slots if necessary
     ) { paddingValues ->
         Box(modifier = Modifier.padding(paddingValues)) {
             Box(
@@ -108,8 +100,7 @@ fun LoginScreen(logo: Painter, navController: NavController) {
                         singleLine = true,
                         visualTransformation = PasswordVisualTransformation(),
                         keyboardActions = KeyboardActions(onDone = {
-                            isLoggingIn = true
-                            viewModel.login(email, password, snackbarManager)
+                            viewModel.login(email, password, snackbarHostState)
                         }),
                         colors = OutlinedTextFieldDefaults.colors(
                             focusedTextColor = Color.White,
@@ -125,8 +116,7 @@ fun LoginScreen(logo: Painter, navController: NavController) {
 
                     Button(
                         onClick = {
-                            isLoggingIn = true
-                            viewModel.login(email, password, snackbarManager)
+                            viewModel.login(email, password, snackbarHostState)
                         }, colors = ButtonDefaults.buttonColors(
                             containerColor = MaterialTheme.colorScheme.secondary,
                             contentColor = Color.Black
