@@ -19,7 +19,7 @@ object ServiceModule {
     @Singleton
     @Provides
     fun provideRetrofit(): Retrofit = Retrofit.Builder()
-        .baseUrl("http://10.0.2.2/homy_backend/api/")
+        .baseUrl("http://10.0.2.2/api/")
         .addConverterFactory(GsonConverterFactory.create())
         .build()
 

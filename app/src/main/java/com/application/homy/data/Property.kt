@@ -11,5 +11,6 @@ data class Property(
     val owner: User,
     val images: List<String>,
     val created_at: String,
-    val isFavorite: Boolean
+    val is_favorite: Boolean,
+    val has_bidded: Boolean
 )

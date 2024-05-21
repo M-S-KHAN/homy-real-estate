@@ -70,6 +70,7 @@ dependencies {
     implementation(libs.androidx.navigation.compose)
     implementation(libs.hilt.android.v244)
     implementation(libs.coil.compose)
+    implementation(libs.accompanist.pager)
     kapt(libs.hilt.android.compiler.v244)
     implementation(libs.androidx.hilt.work)
     kapt(libs.androidx.hilt.compiler.v100)

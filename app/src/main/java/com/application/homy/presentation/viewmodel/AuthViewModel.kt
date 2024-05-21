@@ -1,5 +1,6 @@
 package com.application.homy.presentation.viewmodel
 
+import android.util.Log
 import androidx.compose.material3.SnackbarHostState
 import androidx.lifecycle.*
 import com.application.homy.data.LoginResult
@@ -45,10 +46,17 @@ class AuthViewModel @Inject constructor(
                         sessionManager.saveUserId((response.data as LoginResult).user!!.id.toString())
                     }
 
-                    is ApiResponse.Error -> snackbarManager.showError(
-                        snackbarHostState,
-                        response.message,
-                    )
+                    is ApiResponse.Error -> {
+                        snackbarManager.showError(
+                            snackbarHostState,
+                            response.message,
+                        )
+                        System.out.println(response.message)
+                    }
+
+                    else -> {
+                        Log.d("AuthViewModel", "Logging in...")
+                    }
                 }
                 _loginState.value = response
 
@@ -71,6 +79,10 @@ class AuthViewModel @Inject constructor(
 
                     is ApiResponse.Error -> {
                         snackbarManager.showError(snackbarHostState, response.message)
+                    }
+
+                    else -> {
+                        Log.d("AuthViewModel", "Registering...")
                     }
                 }
                 _registerState.value = response

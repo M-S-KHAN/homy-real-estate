@@ -19,4 +19,7 @@
     <string name="register_route">register</string>
     <string name="favourites_route">favourites</string>
     <string name="browse_route">browse</string>
+    <string name="place_bid">Place Your Bid</string>
+    <string name="bid_amount">Bid Amound</string>
+    <string name="bid_comments">Add Comments</string>
 </resources>

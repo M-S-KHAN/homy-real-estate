@@ -23,10 +23,8 @@ import com.application.homy.service.ApiResponse
 import com.application.homy.ui.theme.LogoYellow
 
 @Composable
-fun RegistrationScreen(logo: Painter, navController: NavController) {
+fun RegistrationScreen(logo: Painter, navController: NavController, snackbarHostState: SnackbarHostState) {
     val viewModel: AuthViewModel = hiltViewModel()
-
-    val snackbarHostState = remember { SnackbarHostState() }
 
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
