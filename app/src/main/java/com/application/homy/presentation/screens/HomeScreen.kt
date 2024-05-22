@@ -23,6 +23,7 @@ fun BottomNavigationBar(navController: NavHostController) {
         selectedIconColor = Color.White,
         unselectedIconColor = MaterialTheme.colorScheme.background,
         indicatorColor = MaterialTheme.colorScheme.background,
+        selectedTextColor = MaterialTheme.colorScheme.background,
     )
 
     BottomAppBar(

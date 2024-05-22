@@ -126,10 +126,10 @@ fun LoginScreen(logo: Painter, navController: NavController, snackbarHostState: 
                             .background(LogoYellow, CircleShape)
                     ) {
                         if (isLoggingIn) {
-                            Text(stringResource(id = R.string.logging_in_text), fontSize = 18.sp)
+                            Text(stringResource(id = R.string.logging_in_text), fontSize = 18.sp, color = MaterialTheme.colorScheme.background)
 
                         } else {
-                            Text(stringResource(id = R.string.login_text), fontSize = 18.sp)
+                            Text(stringResource(id = R.string.login_text), fontSize = 18.sp, color = MaterialTheme.colorScheme.background)
                         }
                     }
                     Spacer(modifier = Modifier.height(24.dp))

@@ -22,7 +22,8 @@ private val DarkColorScheme = darkColorScheme(
     background = BackgroundGreen,
     onTertiary = HoverOrange,
     inverseSurface = CustomBlack,
-    error = ErrorRed
+    error = ErrorRed,
+    onSurface = MainWhite
 )
 
 private val LightColorScheme = lightColorScheme(
@@ -32,7 +33,8 @@ private val LightColorScheme = lightColorScheme(
     background = BackgroundGreen,
     onTertiary = HoverOrange,
     inverseSurface = CustomBlack,
-    error = ErrorRed
+    error = ErrorRed,
+    onSurface = MainWhite
 
     /* Other default colors to override
     background = Color(0xFFFFFBFE),

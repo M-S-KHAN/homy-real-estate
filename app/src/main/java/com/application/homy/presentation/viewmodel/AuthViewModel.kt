@@ -40,9 +40,9 @@ class AuthViewModel @Inject constructor(
             apiRepository.login(email, password).collect { response ->
                 when (response) {
                     is ApiResponse.Success<*> -> {
-                        snackbarManager.showInfo(
-                            snackbarHostState, "Login Successful"
-                        )
+//                        snackbarManager.showInfo(
+//                            snackbarHostState, "Login Successful"
+//                        )
                         sessionManager.saveUserId((response.data as LoginResult).user!!.id.toString())
                     }
 

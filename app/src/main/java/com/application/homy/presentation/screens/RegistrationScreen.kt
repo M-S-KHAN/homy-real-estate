@@ -171,10 +171,10 @@ fun RegistrationScreen(logo: Painter, navController: NavController, snackbarHost
                             .background(LogoYellow, CircleShape)
                     ) {
                         if (isRegistering) {
-                            Text(stringResource(id = R.string.registering_text), fontSize = 18.sp)
+                            Text(stringResource(id = R.string.registering_text), fontSize = 18.sp, color = MaterialTheme.colorScheme.background)
 
                         } else {
-                            Text(stringResource(id = R.string.register_text), fontSize = 18.sp)
+                            Text(stringResource(id = R.string.register_text), fontSize = 18.sp, color = MaterialTheme.colorScheme.background)
                         }
                     }
                     Spacer(modifier = Modifier.height(24.dp))
