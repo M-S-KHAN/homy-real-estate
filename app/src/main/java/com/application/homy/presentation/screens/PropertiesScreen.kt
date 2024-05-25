@@ -24,15 +24,15 @@ import com.application.homy.service.ApiResponse
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun BrowseScreen(navController: NavHostController, snackbarHostState: SnackbarHostState) {
+fun PropertiesScreen(navController: NavHostController, snackbarHostState: SnackbarHostState) {
     CustomScaffold(title = "Browse Properties", body = { paddingValues ->
-        BrowseScreenContent(paddingValues, navController, snackbarHostState)
+        PropertiesScreenContent(paddingValues, navController, snackbarHostState)
     })
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun BrowseScreenContent(
+fun PropertiesScreenContent(
     paddingValues: PaddingValues,
     navController: NavHostController,
     snackbarHostState: SnackbarHostState

@@ -23,23 +23,26 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
-import dagger.hilt.android.AndroidEntryPoint
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.application.homy.presentation.screens.AddUserScreen
 import com.application.homy.presentation.screens.BottomNavigationBar
 import com.application.homy.presentation.screens.BrowseScreen
 import com.application.homy.presentation.screens.FavouritesScreen
+import com.application.homy.presentation.screens.LandlordsScreen
 import com.application.homy.presentation.screens.LoginScreen
 import com.application.homy.presentation.screens.ProfileScreen
-import com.application.homy.presentation.screens.RegistrationScreen
+import com.application.homy.presentation.screens.PropertiesScreen
 import com.application.homy.presentation.screens.PropertyDetailsScreen
+import com.application.homy.presentation.screens.RegistrationScreen
 import com.application.homy.presentation.viewmodel.AuthViewModel
 import com.application.homy.presentation.viewmodel.BrowseViewModel
 import com.application.homy.ui.theme.HomyTheme
+import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -56,7 +59,7 @@ class MainActivity : ComponentActivity() {
     fun shouldShowBottomBar(navController: NavHostController): Boolean {
         val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
         return currentRoute in listOf(
-            "browse", "favourites", "profile"
+            "browse", "landlords", "favourites", "profile", "properties"
         )
     }
 
@@ -88,25 +91,42 @@ class MainActivity : ComponentActivity() {
 
     @RequiresApi(Build.VERSION_CODES.O)
     @Composable
-    fun AppNavigation(navController: NavHostController, innerPadding: PaddingValues, snackbarHostState: SnackbarHostState) {
+    fun AppNavigation(
+        navController: NavHostController,
+        innerPadding: PaddingValues,
+        snackbarHostState: SnackbarHostState
+    ) {
 
         // Get the view model using hilt
         val auth: AuthViewModel = hiltViewModel()
         val browse: BrowseViewModel = hiltViewModel()
         val startDestination = if (auth.checkIfLoggedIn()) "main" else "login"
+        val mainStart = if (auth.getRole() == "admin") "landlords" else "browse"
 
         val logoPainter = painterResource(id = R.drawable.logo_full)
 
         NavHost(navController = navController, startDestination = startDestination) {
             composable("login") { LoginScreen(logoPainter, navController, snackbarHostState) }
-            composable("register") { RegistrationScreen(logoPainter, navController, snackbarHostState) }
-            navigation(startDestination = "browse", route = "main") {
+            composable("register") {
+                RegistrationScreen(
+                    logoPainter, navController, snackbarHostState
+                )
+            }
+            navigation(startDestination = mainStart, route = "main") {
                 composable("browse") { BrowseScreen(navController, snackbarHostState) }
-                composable("propertyDetails/{propertyId}", arguments = listOf(navArgument("propertyId") { type = NavType.IntType })) { backStackEntry ->
+                composable("landlords") { LandlordsScreen(navController, snackbarHostState) }
+                composable("properties") { PropertiesScreen(navController, snackbarHostState) }
+                composable(
+                    "propertyDetails/{propertyId}",
+                    arguments = listOf(navArgument("propertyId") { type = NavType.IntType })
+                ) { backStackEntry ->
                     val propertyId = backStackEntry.arguments?.getInt("propertyId")
-                    PropertyDetailsScreen(propertyId!!, auth.getUserId()!!.toInt(), navController, snackbarHostState)
+                    PropertyDetailsScreen(
+                        propertyId!!, auth.getUserId()!!.toInt(), navController, snackbarHostState
+                    )
                 }
                 composable("favourites") { FavouritesScreen() }
+                composable("addUser") { AddUserScreen(navController, snackbarHostState) }
                 composable("profile") { ProfileScreen(navController) }
             }
         }

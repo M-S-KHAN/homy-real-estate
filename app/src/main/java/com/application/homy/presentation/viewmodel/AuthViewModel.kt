@@ -43,7 +43,7 @@ class AuthViewModel @Inject constructor(
 //                        snackbarManager.showInfo(
 //                            snackbarHostState, "Login Successful"
 //                        )
-                        sessionManager.saveUserId((response.data as LoginResult).user!!.id.toString())
+                        sessionManager.saveUserInfo((response.data as LoginResult).user!!.id.toString(), (response.data as LoginResult).user!!.role.toString())
                     }
 
                     is ApiResponse.Error -> {
@@ -74,7 +74,7 @@ class AuthViewModel @Inject constructor(
                 when (response) {
                     is ApiResponse.Success<*> -> {
                         snackbarManager.showInfo(snackbarHostState, "Registration Successful")
-                        sessionManager.saveUserId((response.data as LoginResult).user!!.id.toString())
+                        sessionManager.saveUserInfo((response.data as LoginResult).user!!.id.toString(), (response.data as LoginResult).user!!.role.toString())
                     }
 
                     is ApiResponse.Error -> {
@@ -97,6 +97,10 @@ class AuthViewModel @Inject constructor(
 
     fun getUserId(): String? {
         return sessionManager.fetchUserId()
+    }
+
+    fun getRole(): String? {
+        return sessionManager.fetchUserRole()
     }
 
     fun logout() {

@@ -4,6 +4,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.application.homy.data.Property
+import com.application.homy.data.PropertyDetail
 import com.application.homy.service.ApiRepository
 import com.application.homy.service.ApiResponse
 import com.application.homy.service.SnackbarManager
@@ -22,8 +23,8 @@ class BrowseViewModel @Inject constructor(
     private val _propertiesState = MutableStateFlow<ApiResponse<List<Property>>?>(null)
     val propertiesState: StateFlow<ApiResponse<List<Property>>?> = _propertiesState.asStateFlow()
 
-    private val _propertyState = MutableStateFlow<ApiResponse<Property>?>(null)
-    val propertyState: StateFlow<ApiResponse<Property>?> = _propertyState.asStateFlow()
+    private val _propertyState = MutableStateFlow<ApiResponse<PropertyDetail>?>(null)
+    val propertyState: StateFlow<ApiResponse<PropertyDetail>?> = _propertyState.asStateFlow()
 
     private val _isCreatingBid = MutableStateFlow(false)
     val isCreatingBid = _isCreatingBid.asStateFlow()

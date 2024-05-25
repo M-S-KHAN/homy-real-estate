@@ -2,11 +2,15 @@ package com.application.homy.service
 
 import com.application.homy.data.BidRequest
 import com.application.homy.data.BidResult
+import com.application.homy.data.CreateUserRequest
 import com.application.homy.data.LoginRequest
 import com.application.homy.data.LoginResult
+import com.application.homy.data.MessageResponse
 import com.application.homy.data.Property
+import com.application.homy.data.PropertyDetail
 import com.application.homy.data.RegisterRequest
 import com.application.homy.data.RegisterResult
+import com.application.homy.data.UserListResponse
 import com.google.gson.Gson
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -95,26 +99,45 @@ class ApiRepository @Inject constructor(
         }
     }
 
-    suspend fun getProperty(userId: Int, propertyId: Int): Flow<ApiResponse<Property>> = flow {
-        println(userId)
-        println(propertyId)
+    suspend fun getLandlords(userId: Int): Flow<ApiResponse<UserListResponse>> = flow {
         if (!networkChecker.hasInternetConnection()) {
             emit(ApiResponse.Error("No internet connection available"))
             return@flow
         }
 
         try {
-            val response = apiService.getProperty(userId, propertyId)
+            val response = apiService.getLandlords(userId, "agent")
             if (response.isSuccessful && response.body() != null) {
-                println(response.body()!!)
                 emit(ApiResponse.Success(response.body()!!))
             } else {
-                emit(ApiResponse.Error("Failed to fetch property: ${response.message()}"))
+                emit(ApiResponse.Error("Failed to fetch landlords: ${response.message()}"))
             }
         } catch (e: Exception) {
             emit(ApiResponse.Error("An error occurred: ${e.localizedMessage}"))
         }
     }
+
+    suspend fun getProperty(userId: Int, propertyId: Int): Flow<ApiResponse<PropertyDetail>> =
+        flow {
+            println(userId)
+            println(propertyId)
+            if (!networkChecker.hasInternetConnection()) {
+                emit(ApiResponse.Error("No internet connection available"))
+                return@flow
+            }
+
+            try {
+                val response = apiService.getProperty(userId, propertyId)
+                if (response.isSuccessful && response.body() != null) {
+                    println(response.body()!!)
+                    emit(ApiResponse.Success(response.body()!!))
+                } else {
+                    emit(ApiResponse.Error("Failed to fetch property: ${response.message()}"))
+                }
+            } catch (e: Exception) {
+                emit(ApiResponse.Error("An error occurred: ${e.localizedMessage}"))
+            }
+        }
 
     suspend fun createBid(
         userId: Int, propertyId: Int, amount: Double, message: String
@@ -133,6 +156,58 @@ class ApiRepository @Inject constructor(
                 emit(ApiResponse.Success(response.body()!!))
             } else {
                 emit(ApiResponse.Error("Failed to create bid: ${response.message()}"))
+            }
+        } catch (e: Exception) {
+            emit(ApiResponse.Error("An error occurred: ${e.localizedMessage}"))
+        }
+    }
+
+    suspend fun deleteUser(userId: Int, adminId: Int): Flow<ApiResponse<MessageResponse>> = flow {
+        val gson = Gson()
+        if (!networkChecker.hasInternetConnection()) {
+            emit(ApiResponse.Error("No internet connection available"))
+            return@flow
+        }
+        try {
+            val response = apiService.deleteUser(userId, adminId)
+            if (response.isSuccessful && response.body() != null) {
+                emit(ApiResponse.Success(response.body()!!))
+            } else {
+                emit(
+                    ApiResponse.Error(
+                        "Failed to delete landlord: ${
+                            gson.fromJson(
+                                response.errorBody()?.string(), RegisterResult::class.java
+                            ).message
+                        }"
+                    )
+                )
+            }
+        } catch (e: Exception) {
+            emit(ApiResponse.Error("An error occurred: ${e.localizedMessage}"))
+        }
+    }
+
+    suspend fun createUser(user: CreateUserRequest): Flow<ApiResponse<MessageResponse>> = flow {
+        val gson = Gson()
+        if (!networkChecker.hasInternetConnection()) {
+            emit(ApiResponse.Error("No internet connection available"))
+            return@flow
+        }
+        try {
+            val response = apiService.createUser(user)
+            if (response.isSuccessful && response.body() != null) {
+                emit(ApiResponse.Success(response.body()!!))
+            } else {
+                emit(
+                    ApiResponse.Error(
+                        "Failed to create user: ${
+                            gson.fromJson(
+                                response.errorBody()?.string(), RegisterResult::class.java
+                            ).message
+                        }"
+                    )
+                )
             }
         } catch (e: Exception) {
             emit(ApiResponse.Error("An error occurred: ${e.localizedMessage}"))

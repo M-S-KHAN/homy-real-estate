@@ -5,11 +5,14 @@ import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -30,9 +33,19 @@ fun CustomScaffold(
     },
     topBarBackgroundColor: Color = MaterialTheme.colorScheme.secondary,
     floatingActionButton: @Composable (() -> Unit)? = null,
-    bottomBar: @Composable (() -> Unit)? = null
+    bottomBar: @Composable (() -> Unit)? = null,
+    snackbarHostState: SnackbarHostState? = null,
 ) {
-    Scaffold(topBar = {
+    Scaffold(floatingActionButton = {
+        if (floatingActionButton != null) {
+             floatingActionButton()
+        }
+
+    }, snackbarHost = {
+        snackbarHostState?.let {
+            SnackbarHost(snackbarHostState)
+        }
+    }, topBar = {
         if (showTopBar) {
             CenterAlignedTopAppBar(
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -41,11 +54,9 @@ fun CustomScaffold(
                 title = topBarTitle,
             )
         }
-    },
-//        floatingActionButton = floatingActionButton,
-        bottomBar = {
-            bottomBar?.invoke()
-        }) { paddingValues ->
+    }, bottomBar = {
+        bottomBar?.invoke()
+    }) { paddingValues ->
         body(paddingValues)
     }
 }

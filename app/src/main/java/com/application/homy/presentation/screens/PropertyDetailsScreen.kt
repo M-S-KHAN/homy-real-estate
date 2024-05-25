@@ -59,6 +59,7 @@ import androidx.navigation.NavController
 import coil.compose.rememberImagePainter
 import com.application.homy.R
 import com.application.homy.data.Property
+import com.application.homy.data.PropertyDetail
 import com.application.homy.presentation.elements.BidDialog
 import com.application.homy.presentation.viewmodel.BrowseViewModel
 import com.application.homy.service.ApiResponse
@@ -176,13 +177,14 @@ fun PropertyDetailsScreen(
 }
 
 @Composable
-fun PropertyDetailsContent(property: Property, modifier: Modifier) {
+fun PropertyDetailsContent(property: PropertyDetail, modifier: Modifier) {
+    val images = property.images.map { it.image_url }
     Column(
         modifier = modifier.fillMaxHeight(),
         verticalArrangement = Arrangement.Top,
     ) {
         Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
-            ImageSlider(images = property.images)
+            ImageSlider(images = images)
 
             Column(modifier = Modifier.padding(16.dp)) {
                 Text(
@@ -230,32 +232,3 @@ fun ImageSlider(images: List<String>) {
         )
     }
 }
-
-@Preview(showBackground = true)
-@Composable
-fun PropertyDetailsPreview() {
-    PropertyDetailsContent(
-        property = Property(
-            id = 1,
-            title = "Beautiful House",
-            description = "This is a beautiful house",
-            price = 100000,
-            address = "123 Main St",
-            lat = 0.0,
-            lng = 0.0,
-            owner = com.application.homy.data.User(
-                id = 1,
-                username = "John Doe",
-                email = "",
-                profile_image_url = "",
-                role = "",
-            ),
-            images = listOf("https://example.com/image1.jpg", "https://example.com/image2.jpg"),
-            created_at = "2022-01-01",
-            is_favorite = false,
-            has_bidded = false
-        ), modifier = Modifier.fillMaxSize()
-    )
-}
-
-
