@@ -36,6 +36,11 @@ fun LoginScreen(logo: Painter, navController: NavController, snackbarHostState: 
 
     val loginState = viewModel.loginState.collectAsState().value
 
+    if (viewModel.shouldLogOut()){
+        viewModel.logout()
+        viewModel.clearShouldLogOut()
+    }
+
     LaunchedEffect(loginState) {
         when (loginState) {
             is ApiResponse.Success -> {

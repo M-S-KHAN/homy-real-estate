@@ -1,5 +1,7 @@
 package com.application.homy.presentation.screens
 
+
+import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -11,6 +13,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
@@ -29,38 +32,41 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.application.homy.R
-import com.application.homy.data.CreateUserRequest
+import com.application.homy.data.AddPropertyRequest
 import com.application.homy.presentation.elements.CustomScaffold
+import com.application.homy.presentation.elements.GalleryImagePicker
 import com.application.homy.presentation.viewmodel.AuthViewModel
-import com.application.homy.presentation.viewmodel.LandlordsViewModel
+import com.application.homy.presentation.viewmodel.BrowseViewModel
 import com.application.homy.ui.theme.LogoYellow
 
 @Composable
-fun AddUserScreen(navController: NavController, snackbarHostState: SnackbarHostState) {
-    val viewModel: LandlordsViewModel = hiltViewModel()
+fun AddPropertyScreen(navController: NavController, snackbarHostState: SnackbarHostState) {
+    val viewModel: BrowseViewModel = hiltViewModel()
     val authViewModel: AuthViewModel = hiltViewModel()
 
-    var username by remember { mutableStateOf("") }
-    var email by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
-    var role by remember { mutableStateOf("") }
+    var title by remember { mutableStateOf("") }
+    var description by remember { mutableStateOf("") }
+    var address by remember { mutableStateOf("") }
+    var price by remember { mutableStateOf("") }
+    var lat by remember { mutableStateOf("") }
+    var lng by remember { mutableStateOf("") }
+    var images by remember { mutableStateOf(listOf<Uri>()) }
 
-    val isAddingUser by viewModel.isAddingUser.collectAsState()
+    val isAddingProperty by viewModel.isAddingProperty.collectAsState()
 
-    val emailPattern = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+" // Simple email pattern for validation
-    val isEmailValid = email.matches(emailPattern.toRegex())
-    val isPasswordValid = password.length >= 8
-    val isRoleValid = role == "admin" || role == "client" || role == "agent"
-    val isUsernameValid = username.length >= 3 && username.isNotEmpty()
+    val isTitleValid = title.isNotEmpty()
+    val isDescriptionValid = description.isNotEmpty()
+    val isAddressValid = address.isNotEmpty()
+    val isPriceValid = price.isNotEmpty()
+    val isLatValid = lat.isNotEmpty()
+    val isLngValid = lng.isNotEmpty()
 
-    CustomScaffold(title = "Add New User", body = { paddingValues ->
+    CustomScaffold(title = "Add New Property", body = { paddingValues ->
         Scaffold(
             snackbarHost = { SnackbarHost(snackbarHostState) },
         ) { paddingValues ->
@@ -81,9 +87,9 @@ fun AddUserScreen(navController: NavController, snackbarHostState: SnackbarHostS
                     ) {
                         Column {
                             OutlinedTextField(
-                                value = username,
-                                onValueChange = { username = it },
-                                label = { Text("Username") },
+                                value = title,
+                                onValueChange = { title = it },
+                                label = { Text("Title") },
                                 singleLine = true,
                                 colors = OutlinedTextFieldDefaults.colors(
                                     focusedTextColor = Color.White,
@@ -97,10 +103,89 @@ fun AddUserScreen(navController: NavController, snackbarHostState: SnackbarHostS
                             )
                             Spacer(modifier = Modifier.height(5.dp))
                             OutlinedTextField(
-                                value = email,
-                                onValueChange = { email = it },
-                                label = { Text(stringResource(id = R.string.email_text)) },
+                                value = description,
+                                onValueChange = { description = it },
+                                label = { Text("Description") },
                                 singleLine = true,
+                                colors = OutlinedTextFieldDefaults.colors(
+                                    focusedTextColor = Color.White,
+                                    focusedBorderColor = MaterialTheme.colorScheme.secondary,
+                                    unfocusedBorderColor = Color.White,
+                                    unfocusedTextColor = Color.White,
+                                    cursorColor = Color.White,
+                                    unfocusedLabelColor = Color.White,
+                                    focusedLabelColor = MaterialTheme.colorScheme.secondary,
+                                )
+                            )
+                            Spacer(modifier = Modifier.height(5.dp))
+                            OutlinedTextField(
+                                value = address,
+                                onValueChange = { address = it },
+                                label = { Text("Address") },
+                                singleLine = true,
+                                colors = OutlinedTextFieldDefaults.colors(
+                                    focusedTextColor = Color.White,
+                                    focusedBorderColor = MaterialTheme.colorScheme.secondary,
+                                    unfocusedBorderColor = Color.White,
+                                    unfocusedTextColor = Color.White,
+                                    cursorColor = Color.White,
+                                    unfocusedLabelColor = Color.White,
+                                    focusedLabelColor = MaterialTheme.colorScheme.secondary,
+                                )
+                            )
+                            Spacer(modifier = Modifier.height(5.dp))
+                            OutlinedTextField(
+                                value = price,
+                                onValueChange = { price = it },
+                                label = { Text("Price") },
+                                singleLine = true,
+                                keyboardOptions = KeyboardOptions.Default.merge(
+                                    other = KeyboardOptions(
+                                        keyboardType = KeyboardType.Number
+                                    )
+                                ),
+                                colors = OutlinedTextFieldDefaults.colors(
+                                    focusedTextColor = Color.White,
+                                    focusedBorderColor = MaterialTheme.colorScheme.secondary,
+                                    unfocusedBorderColor = Color.White,
+                                    unfocusedTextColor = Color.White,
+                                    cursorColor = Color.White,
+                                    unfocusedLabelColor = Color.White,
+                                    focusedLabelColor = MaterialTheme.colorScheme.secondary,
+                                )
+                            )
+                            Spacer(modifier = Modifier.height(5.dp))
+                            OutlinedTextField(
+                                value = lat,
+                                onValueChange = { lat = it },
+                                label = { Text("Latitude") },
+                                singleLine = true,
+                                keyboardOptions = KeyboardOptions.Default.merge(
+                                    other = KeyboardOptions(
+                                        keyboardType = KeyboardType.Number
+                                    )
+                                ),
+                                colors = OutlinedTextFieldDefaults.colors(
+                                    focusedTextColor = Color.White,
+                                    focusedBorderColor = MaterialTheme.colorScheme.secondary,
+                                    unfocusedBorderColor = Color.White,
+                                    unfocusedTextColor = Color.White,
+                                    cursorColor = Color.White,
+                                    unfocusedLabelColor = Color.White,
+                                    focusedLabelColor = MaterialTheme.colorScheme.secondary,
+                                )
+                            )
+                            Spacer(modifier = Modifier.height(5.dp))
+                            OutlinedTextField(
+                                value = lng,
+                                onValueChange = { lng = it },
+                                label = { Text("Longitude") },
+                                singleLine = true,
+                                keyboardOptions = KeyboardOptions.Default.merge(
+                                    other = KeyboardOptions(
+                                        keyboardType = KeyboardType.Number
+                                    )
+                                ),
                                 colors = OutlinedTextFieldDefaults.colors(
                                     focusedTextColor = Color.White,
                                     focusedBorderColor = MaterialTheme.colorScheme.secondary,
@@ -113,74 +198,50 @@ fun AddUserScreen(navController: NavController, snackbarHostState: SnackbarHostS
                             )
                             Spacer(modifier = Modifier.height(5.dp))
 
-                            OutlinedTextField(
-                                value = password,
-                                onValueChange = { password = it },
-                                label = { Text(stringResource(id = R.string.password_text)) },
-                                singleLine = true,
-                                visualTransformation = PasswordVisualTransformation(),
-                                colors = OutlinedTextFieldDefaults.colors(
-                                    focusedTextColor = Color.White,
-                                    focusedBorderColor = MaterialTheme.colorScheme.secondary,
-                                    unfocusedBorderColor = Color.White,
-                                    unfocusedTextColor = Color.White,
-                                    cursorColor = Color.White,
-                                    unfocusedLabelColor = Color.White,
-                                    focusedLabelColor = MaterialTheme.colorScheme.secondary,
-                                )
-                            )
-                            Spacer(modifier = Modifier.height(5.dp))
-                            OutlinedTextField(
-                                value = role,
-                                onValueChange = { role = it },
-                                label = { Text("Role") },
-                                singleLine = true,
-                                colors = OutlinedTextFieldDefaults.colors(
-                                    focusedTextColor = Color.White,
-                                    focusedBorderColor = MaterialTheme.colorScheme.secondary,
-                                    unfocusedBorderColor = Color.White,
-                                    unfocusedTextColor = Color.White,
-                                    cursorColor = Color.White,
-                                    unfocusedLabelColor = Color.White,
-                                    focusedLabelColor = MaterialTheme.colorScheme.secondary,
-                                )
-                            )
                             Spacer(modifier = Modifier.height(24.dp))
+                            GalleryImagePicker(onImagesPicked = { imgs ->
+                                // Handle the selected images URIs
+                                images = imgs
+                            })
                         }
+
                         Button(
                             onClick = {
-                                val createUserRequest = CreateUserRequest(
-                                    username = username,
-                                    email = email,
-                                    password = password,
-                                    role = role,
-                                    admin_id = authViewModel.getUserId()!!.toInt()
+                                val addPropertyRequest = AddPropertyRequest(
+                                    title = title,
+                                    description = description,
+                                    address = address,
+                                    price = price.toInt(),
+                                    lat = lat.toDouble(),
+                                    lng = lng.toDouble(),
+                                    owner_id = authViewModel.getUserId()!!.toInt()
                                 )
-                                viewModel.addLandlord(
-                                    createUserRequest, snackbarHostState, navController
+                                viewModel.addProperty(
+                                    addPropertyRequest, images, snackbarHostState, navController
                                 )
+
                             },
                             colors = ButtonDefaults.buttonColors(
                                 containerColor = MaterialTheme.colorScheme.secondary,
                                 contentColor = Color.Black,
                                 disabledContainerColor = Color.Gray,
                             ),
-                            enabled = !isAddingUser && isEmailValid && isPasswordValid && isRoleValid && isUsernameValid,
+                            enabled = !isAddingProperty && isTitleValid && isDescriptionValid && isAddressValid && isPriceValid && isLatValid && isLngValid,
 
                             modifier = Modifier
                                 .height(50.dp)
                                 .width(270.dp)
                                 .background(LogoYellow, CircleShape)
                         ) {
-                            if (isAddingUser) {
+                            if (isAddingProperty) {
                                 Text(
-                                    "Adding User...",
+                                    "Adding Property...",
                                     fontSize = 18.sp,
                                     color = MaterialTheme.colorScheme.background
                                 )
                             } else {
                                 Text(
-                                    "Add User",
+                                    "Add Property",
                                     fontSize = 18.sp,
                                     color = MaterialTheme.colorScheme.background
                                 )

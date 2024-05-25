@@ -44,7 +44,7 @@ fun ProfileScreen(navController: NavController) {
 @Composable
 fun ProfileScreenContent(paddingValues: PaddingValues, navController: NavController) {
     val viewModel: AuthViewModel = hiltViewModel()
-    val menuItems = listOf("Your Bids", "Profile", "About", "Logout")
+    val menuItems = listOf("Logout")
 
     Column(
         modifier = Modifier
@@ -60,17 +60,21 @@ fun ProfileScreenContent(paddingValues: PaddingValues, navController: NavControl
         ) {
             items(menuItems) { item ->
                 ProfileMenuItem(item, onClick = {
+                    // Print nav graph
                     when (item) {
                         "Logout" -> {
-                            viewModel.logout()
+                            viewModel.setShouldLogOut()
                             navController.navigate("login") {
-                                popUpTo("main") { inclusive = true }
+                                popUpTo(navController.graph.startDestinationId) {
+                                    inclusive = true
+                                }
+                                launchSingleTop = true
                             }
                         }
 
-                        "Your Bids" -> navController.navigate("bids")
-                        "Profile" -> navController.navigate("editProfile")
-                        "About" -> navController.navigate("about")
+//                        "Your Bids" -> navController.navigate("bids")
+//                        "Profile" -> navController.navigate("editProfile")
+//                        "About" -> navController.navigate("about")
                     }
                 })
                 Spacer(modifier = Modifier.height(8.dp))
@@ -98,9 +102,9 @@ fun ProfileMenuItem(text: String, onClick: () -> Unit) {
         )
         Icon(
             imageVector = when (text) {
-                "Your Bids" -> Icons.Filled.List
-                "Profile" -> Icons.Filled.AccountCircle
-                "About" -> Icons.Filled.Info
+//                "Your Bids" -> Icons.Filled.List
+//                "Profile" -> Icons.Filled.AccountCircle
+//                "About" -> Icons.Filled.Info
                 "Logout" -> Icons.Filled.ExitToApp
                 else -> Icons.Filled.Info
             },

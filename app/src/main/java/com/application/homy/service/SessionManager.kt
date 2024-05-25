@@ -15,6 +15,18 @@ class SessionManager @Inject constructor(@ApplicationContext context: Context) {
         sharedPreferences.edit().putString("ROLE", role).apply()
     }
 
+    fun setShouldLogOut() {
+        sharedPreferences.edit().putBoolean("SHOULD_LOG_OUT", true).apply()
+    }
+
+    fun fetchShouldLogOut(): Boolean {
+        return sharedPreferences.getBoolean("SHOULD_LOG_OUT", false)
+    }
+
+    fun clearShouldLogOut() {
+        sharedPreferences.edit().remove("SHOULD_LOG_OUT").apply()
+    }
+
     fun fetchUserId(): String? {
         return sharedPreferences.getString("USER_ID", null)
     }

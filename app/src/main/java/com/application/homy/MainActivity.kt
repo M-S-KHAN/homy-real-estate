@@ -29,7 +29,9 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.application.homy.presentation.screens.AddPropertyScreen
 import com.application.homy.presentation.screens.AddUserScreen
+import com.application.homy.presentation.screens.BidsScreen
 import com.application.homy.presentation.screens.BottomNavigationBar
 import com.application.homy.presentation.screens.BrowseScreen
 import com.application.homy.presentation.screens.FavouritesScreen
@@ -59,7 +61,7 @@ class MainActivity : ComponentActivity() {
     fun shouldShowBottomBar(navController: NavHostController): Boolean {
         val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
         return currentRoute in listOf(
-            "browse", "landlords", "favourites", "profile", "properties"
+            "browse", "landlords", "favourites", "profile", "properties", "bids"
         )
     }
 
@@ -99,8 +101,8 @@ class MainActivity : ComponentActivity() {
 
         // Get the view model using hilt
         val auth: AuthViewModel = hiltViewModel()
-        val browse: BrowseViewModel = hiltViewModel()
         val startDestination = if (auth.checkIfLoggedIn()) "main" else "login"
+        println("check logged in called from home" + auth.checkIfLoggedIn())
         val mainStart = if (auth.getRole() == "admin") "landlords" else "browse"
 
         val logoPainter = painterResource(id = R.drawable.logo_full)
@@ -127,7 +129,9 @@ class MainActivity : ComponentActivity() {
                 }
                 composable("favourites") { FavouritesScreen() }
                 composable("addUser") { AddUserScreen(navController, snackbarHostState) }
+                composable("addProperty") { AddPropertyScreen(navController, snackbarHostState) }
                 composable("profile") { ProfileScreen(navController) }
+                composable("bids") { BidsScreen(navController, snackbarHostState)}
             }
         }
     }

@@ -16,6 +16,36 @@ data class CreateUserRequest(
     val admin_id: Int
 )
 
+data class AddPropertyRequest(
+    val owner_id: Int,
+    val title: String,
+    val description: String,
+    val address: String,
+    val price: Int,
+    val lat: Double,
+    val lng: Double
+)
+
+data class BidsResponse(
+    val bids: List<Bid>
+)
+
+data class AddPropertyResponse(
+    val message: String, val property: MiniProperty
+)
+
+data class MiniProperty(
+    val id: Int, val title: String
+)
+
+data class DeletePropertyRequest(
+    val property_id: Int, val user_id: Int
+)
+
+data class AddPropertyImageRequest(
+    val property_id: Int, val image_base64: String
+)
+
 data class UserListResponse(
     val users: List<User>
 )

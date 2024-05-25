@@ -1,10 +1,22 @@
 package com.application.homy.data
 
-data class Bid (
+data class Bid(
     val id: Int,
-    val property_id: Int,
-    val user_id: Int,
-    val amount: Double,
+    val bid_amount: String,
     val message: String,
-    val created_at: String
+    val created_at: String,
+    val by: BidUser,
+    val property: BidProperty
+)
+
+data class BidUser(
+    val user_id: Int,
+    val username: String,
+    val email: String
+)
+
+data class BidProperty(
+    val property_id: Int,
+    val title: String,
+    val description: String
 )

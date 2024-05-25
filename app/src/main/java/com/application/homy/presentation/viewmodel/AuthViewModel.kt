@@ -2,7 +2,8 @@ package com.application.homy.presentation.viewmodel
 
 import android.util.Log
 import androidx.compose.material3.SnackbarHostState
-import androidx.lifecycle.*
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.application.homy.data.LoginResult
 import com.application.homy.data.RegisterResult
 import com.application.homy.service.ApiRepository
@@ -40,10 +41,10 @@ class AuthViewModel @Inject constructor(
             apiRepository.login(email, password).collect { response ->
                 when (response) {
                     is ApiResponse.Success<*> -> {
-//                        snackbarManager.showInfo(
-//                            snackbarHostState, "Login Successful"
-//                        )
-                        sessionManager.saveUserInfo((response.data as LoginResult).user!!.id.toString(), (response.data as LoginResult).user!!.role.toString())
+                        sessionManager.saveUserInfo(
+                            (response.data as LoginResult).user!!.id.toString(),
+                            response.data.user!!.role
+                        )
                     }
 
                     is ApiResponse.Error -> {
@@ -74,7 +75,10 @@ class AuthViewModel @Inject constructor(
                 when (response) {
                     is ApiResponse.Success<*> -> {
                         snackbarManager.showInfo(snackbarHostState, "Registration Successful")
-                        sessionManager.saveUserInfo((response.data as LoginResult).user!!.id.toString(), (response.data as LoginResult).user!!.role.toString())
+                        sessionManager.saveUserInfo(
+                            (response.data as LoginResult).user!!.id.toString(),
+                            (response.data as LoginResult).user!!.role.toString()
+                        )
                     }
 
                     is ApiResponse.Error -> {
@@ -105,6 +109,17 @@ class AuthViewModel @Inject constructor(
 
     fun logout() {
         sessionManager.logout()
-//        isLoggedIn = false
+    }
+
+    fun shouldLogOut(): Boolean {
+        return sessionManager.fetchShouldLogOut()
+    }
+
+    fun setShouldLogOut() {
+        sessionManager.setShouldLogOut()
+    }
+
+    fun clearShouldLogOut() {
+        sessionManager.clearShouldLogOut()
     }
 }

@@ -1,8 +1,13 @@
 package com.application.homy.service
 
+import com.application.homy.data.AddPropertyImageRequest
+import com.application.homy.data.AddPropertyRequest
+import com.application.homy.data.AddPropertyResponse
 import com.application.homy.data.BidRequest
 import com.application.homy.data.BidResult
+import com.application.homy.data.BidsResponse
 import com.application.homy.data.CreateUserRequest
+import com.application.homy.data.DeletePropertyRequest
 import com.application.homy.data.LoginRequest
 import com.application.homy.data.LoginResult
 import com.application.homy.data.MessageResponse
@@ -39,4 +44,17 @@ interface ApiService {
 
     @POST("users/add-user.php")
     suspend fun createUser(@Body request: CreateUserRequest): Response<MessageResponse>
+
+    @DELETE("properties/delete-property.php")
+    suspend fun deleteProperty(@Query("property_id") userId: Int, @Query("user_id") adminId: Int): Response<MessageResponse>
+
+    @POST("properties/add-property.php")
+    suspend fun addProperty(@Body request: AddPropertyRequest): Response<AddPropertyResponse>
+
+    @POST("properties/add-property-image.php")
+    suspend fun addPropertyImage(@Body request: AddPropertyImageRequest): Response<MessageResponse>
+
+    @GET("bids/get-bids.php")
+    suspend fun getBids(@Query("user_id") userId: Int): Response<BidsResponse>
+
 }

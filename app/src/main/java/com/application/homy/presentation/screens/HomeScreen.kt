@@ -3,6 +3,7 @@ package com.application.homy.presentation.screens
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.AccountBox
 import androidx.compose.material.icons.rounded.AccountCircle
+import androidx.compose.material.icons.rounded.Face
 import androidx.compose.material.icons.rounded.Favorite
 import androidx.compose.material.icons.rounded.Home
 import androidx.compose.material.icons.rounded.Menu
@@ -42,11 +43,12 @@ fun BottomNavigationBar(navController: NavHostController) {
         val currentRoute = navBackStackEntry?.destination?.route
 
         if (role == "admin") {
-            NavigationBarItem(icon = {
-                Icon(
-                    imageVector = Icons.Rounded.AccountBox, contentDescription = null
-                )
-            },
+            NavigationBarItem(
+                icon = {
+                    Icon(
+                        imageVector = Icons.Rounded.AccountBox, contentDescription = null
+                    )
+                },
                 label = { Text(text = "Landlords") },
                 selected = currentRoute == "landlords",
                 onClick = {
@@ -64,11 +66,12 @@ fun BottomNavigationBar(navController: NavHostController) {
             )
         }
         if (role == "client") {
-            NavigationBarItem(icon = {
-                Icon(
-                    imageVector = Icons.Rounded.Home, contentDescription = null
-                )
-            },
+            NavigationBarItem(
+                icon = {
+                    Icon(
+                        imageVector = Icons.Rounded.Home, contentDescription = null
+                    )
+                },
                 label = { Text(text = "Browse") },
                 selected = currentRoute == "browse",
                 onClick = {
@@ -86,12 +89,13 @@ fun BottomNavigationBar(navController: NavHostController) {
             )
         }
 
-        if (role == "admin") {
-            NavigationBarItem(icon = {
-                Icon(
-                    imageVector = Icons.Rounded.Menu, contentDescription = null
-                )
-            },
+        if (role == "admin" || role == "agent") {
+            NavigationBarItem(
+                icon = {
+                    Icon(
+                        imageVector = Icons.Rounded.Menu, contentDescription = null
+                    )
+                },
                 label = { Text(text = "Properties") },
                 selected = currentRoute == "properties",
                 onClick = {
@@ -108,28 +112,46 @@ fun BottomNavigationBar(navController: NavHostController) {
                 colors = colors
             )
         }
-        if (role == "client") {
-            NavigationBarItem(icon = {
-                Icon(
-                    imageVector = Icons.Rounded.Favorite, contentDescription = null
-                )
-            },
-                label = { Text(text = "Favourites") },
-                selected = currentRoute == "favourites",
-                onClick = {
-                    if (currentRoute != "favourites") {
-                        navController.navigate("favourites") {
-                            popUpTo(navController.graph.startDestinationId) {
-                                saveState = true
-                            }
-                            launchSingleTop = true
-                            restoreState = true
-                        }
-                    }
-                },
-                colors = colors
+//        if (role == "client") {
+//            NavigationBarItem(
+//                icon = {
+//                    Icon(
+//                        imageVector = Icons.Rounded.Favorite, contentDescription = null
+//                    )
+//                },
+//                label = { Text(text = "Favourites") },
+//                selected = currentRoute == "favourites",
+//                onClick = {
+//                    if (currentRoute != "favourites") {
+//                        navController.navigate("favourites") {
+//                            popUpTo(navController.graph.startDestinationId) {
+//                                saveState = true
+//                            }
+//                            launchSingleTop = true
+//                            restoreState = true
+//                        }
+//                    }
+//                },
+//                colors = colors
+//            )
+//        }
+
+        NavigationBarItem(icon = {
+            Icon(
+                imageVector = Icons.Rounded.Face, contentDescription = null
             )
-        }
+        }, label = { Text(text = "Bids") }, selected = currentRoute == "bids", onClick = {
+            if (currentRoute != "bids") {
+                navController.navigate("bids") {
+                    popUpTo(navController.graph.startDestinationId) {
+                        saveState = true
+                    }
+                    launchSingleTop = true
+                    restoreState = true
+                }
+            }
+        }, colors = colors
+        )
 
 
         NavigationBarItem(icon = {
